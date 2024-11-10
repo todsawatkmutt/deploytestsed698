@@ -1,14 +1,22 @@
 import streamlit as st
 import pandas as pd
-import joblib
+import numpy as np
 from sklearn.preprocessing import LabelEncoder
+from sklearn.neighbors import KNeighborsClassifier
+import joblib
 
 # Load the trained model and encoders (replace with your actual paths)
-model = joblib.load('model_penguin_66130701715.pkl')
-island_encoder = joblib.load('island_encoder.pkl')
-sex_encoder = joblib.load('sex_encoder.pkl')
-species_encoder = joblib.load('species_encoder.pkl')
+# Ensure these files are in your project directory
+try:
+    model = joblib.load('knn_penguin_model.pkl') 
+    island_encoder = joblib.load('island_encoder.pkl')
+    sex_encoder = joblib.load('sex_encoder.pkl')
+    species_encoder = joblib.load('species_encoder.pkl')
+except FileNotFoundError as e:
+    st.error(f"Error loading model or encoder files: {e}")
+    st.stop()
 
+# Streamlit App UI
 st.title("Penguin Species Prediction")
 
 # Input fields for user to enter penguin features
@@ -29,19 +37,16 @@ input_data = pd.DataFrame({
     'sex': [sex]
 })
 
-# Preprocess the input data (similar to how you trained your model)
+# Preprocess the input data (same transformation as during training)
 input_data['island'] = island_encoder.transform(input_data['island']).astype(int)
 input_data['sex'] = sex_encoder.transform(input_data['sex']).astype(int)
 
-# Make prediction
+# Prediction button
 if st.button("Predict"):
     try:
-        # Ensure that the input data is valid
-        if input_data.isnull().any().any():
-            st.error("Please provide all inputs.")
-        else:
-            prediction = model.predict(input_data)
-            predicted_species = species_encoder.inverse_transform(prediction)[0]
-            st.success(f"Predicted Species: **{predicted_species}**")
+        # Make prediction
+        prediction = model.predict(input_data)
+        predicted_species = species_encoder.inverse_transform(prediction)[0]
+        st.success(f"Predicted Species: **{predicted_species}**")
     except Exception as e:
-        st.error(f"Error during prediction: {e}")
+        st.error(f"Prediction failed: {e}")

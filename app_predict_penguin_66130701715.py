@@ -4,7 +4,7 @@ import joblib
 from sklearn.preprocessing import LabelEncoder
 
 # Load the trained model and encoders (replace with your actual paths)
-model = joblib.load('knn_penguin_model.pkl')
+model = joblib.load('model_penguin_66130701715.pkl')
 island_encoder = joblib.load('island_encoder.pkl')
 sex_encoder = joblib.load('sex_encoder.pkl')
 species_encoder = joblib.load('species_encoder.pkl')

@@ -31,7 +31,6 @@ input_data = pd.DataFrame({
     'sex': [sex]
 })
 
-# Preprocess the input data (same transformation as during training)
 # Check for missing values
 if input_data.isnull().values.any():
     st.error("Input contains missing values. Please ensure all fields are filled.")
@@ -45,9 +44,20 @@ except Exception as e:
     st.error(f"Error during encoding: {e}")
     st.stop()
 
+# Convert columns to numeric (just to make sure)
+input_data['culmen_length_mm'] = pd.to_numeric(input_data['culmen_length_mm'], errors='coerce')
+input_data['culmen_depth_mm'] = pd.to_numeric(input_data['culmen_depth_mm'], errors='coerce')
+input_data['flipper_length_mm'] = pd.to_numeric(input_data['flipper_length_mm'], errors='coerce')
+input_data['body_mass_g'] = pd.to_numeric(input_data['body_mass_g'], errors='coerce')
+
 # Ensure the columns are in the correct format
 st.write("User Input (processed):")
 st.write(input_data)
+
+# Check if any of the columns were coerced to NaN during conversion
+if input_data.isnull().values.any():
+    st.error("There are invalid (NaN) values in the input data after conversion. Please check the input values.")
+    st.stop()
 
 # Prediction button
 if st.button("Predict"):

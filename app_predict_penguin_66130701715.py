@@ -32,11 +32,21 @@ input_data = pd.DataFrame({
 })
 
 # Preprocess the input data (same transformation as during training)
-input_data['island'] = island_encoder.transform(input_data['island']).astype(int)
-input_data['sex'] = sex_encoder.transform(input_data['sex']).astype(int)
+# Check for missing values
+if input_data.isnull().values.any():
+    st.error("Input contains missing values. Please ensure all fields are filled.")
+    st.stop()
 
-# Show the data the user entered (Optional)
-st.write("User Input:")
+# Encode categorical variables
+try:
+    input_data['island'] = island_encoder.transform(input_data['island']).astype(int)
+    input_data['sex'] = sex_encoder.transform(input_data['sex']).astype(int)
+except Exception as e:
+    st.error(f"Error during encoding: {e}")
+    st.stop()
+
+# Ensure the columns are in the correct format
+st.write("User Input (processed):")
 st.write(input_data)
 
 # Prediction button

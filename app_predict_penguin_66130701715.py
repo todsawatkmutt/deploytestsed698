@@ -1,18 +1,16 @@
 import streamlit as st
 import pandas as pd
-import joblib
+import pickle
 
 # Load the trained model and encoders (make sure they are in the correct directory)
 try:
-    model = joblib.load('knn_penguin_model.pkl')
-    species_encoder = joblib.load('species_encoder.pkl')
-    island_encoder = joblib.load('island_encoder.pkl')
-    sex_encoder = joblib.load('sex_encoder.pkl')
+    with open('model_penguin_66130701715.pkl', 'rb') as file:
+        model, species_encoder, island_encoder, sex_encoder = pickle.load(file)
 except FileNotFoundError as e:
     st.error(f"Error loading model or encoder files: {e}")
     st.stop()
 
-# Title of the app
+# Title of the Streamlit app
 st.title("Penguin Species Prediction")
 
 # Input fields for the user to enter penguin features
@@ -37,7 +35,7 @@ input_data = pd.DataFrame({
 input_data['island'] = island_encoder.transform(input_data['island']).astype(int)
 input_data['sex'] = sex_encoder.transform(input_data['sex']).astype(int)
 
-# Show the data the user entered
+# Show the data the user entered (Optional)
 st.write("User Input:")
 st.write(input_data)
 
